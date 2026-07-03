@@ -144,11 +144,15 @@ st.markdown(
     .tool-header::after { content: ''; position: absolute; width: 9rem; height: 9rem; right: 3%; top: -5rem; border-radius: 50%; background: var(--ct-accent); filter: blur(75px); opacity: .13; pointer-events: none; }
     .tool-kicker { display: inline-flex; align-items: center; gap: .45rem; color: var(--ct-accent-light); font: 600 .7rem 'Sora', sans-serif; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .7rem; }
     .tool-kicker::before { content: ''; width: 1.5rem; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--ct-accent), #8b5cf6); }
+    .tool-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; }
+    .build-tag { display: inline-flex; align-items: center; gap: .38rem; padding: .38rem .65rem; border: 1px solid color-mix(in srgb, var(--ct-amber) 35%, transparent); border-radius: 999px; background: var(--ct-amber-bg); color: var(--ct-amber); font: 600 .65rem 'Sora', sans-serif; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+    .build-tag::before { content: ''; width: .42rem; height: .42rem; border-radius: 50%; background: currentColor; animation: ctTagPulse 1.8s ease-in-out infinite; }
     .tool-header h1 { color: var(--ct-text); font: 700 clamp(2rem, 4vw, 3rem)/1.08 'Sora', sans-serif; letter-spacing: -.04em; margin: 0; }
     .tool-header p { color: var(--ct-secondary); font-size: .98rem; line-height: 1.65; margin: .7rem 0 0; max-width: 680px; }
     @keyframes ctBoot { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
     @keyframes ctShimmer { to { background-position: 200% center; } }
     @keyframes ctFloat { 50% { transform: translateY(-3px); } }
+    @keyframes ctTagPulse { 50% { opacity: .35; box-shadow: 0 0 0 4px color-mix(in srgb, var(--ct-amber) 12%, transparent); } }
 
     .status-note { color: var(--ct-secondary); background: var(--ct-success-bg); border: 1px solid color-mix(in srgb, var(--ct-success) 25%, transparent); padding: .85rem .9rem; border-radius: 12px; font-size: .75rem; line-height: 1.45; }
     .status-note strong { color: var(--ct-success); }
@@ -241,6 +245,17 @@ TOOLS = {
     "Excel Merge Flattener": ("Spreadsheets", "Unmerge Excel ranges and fill every cell with the merged value."),
     "Category Lister": ("Spreadsheets", "Extract a clean, unique category list from an Excel workbook."),
     **{name: (category, description) for name, (category, description, _) in TEXT_TOOLS.items()},
+}
+
+READY_TOOLS = {
+    "Category Lister",
+    "Excel Merge Flattener",
+    "Patent Intelligence",
+    "Company Finance Lookup",
+    "Google News Search",
+    "PubMed Research Extractor",
+    "PDF Suite",
+    "Excel Splitter",
 }
 
 
@@ -564,12 +579,23 @@ with st.sidebar:
         st.warning("No matching tools")
         filtered = list(TOOLS)
     selection_key = f"tool_{category}_{search.strip().lower()}"
-    selected = st.selectbox("Tool", filtered, key=selection_key)
+    selected = st.selectbox(
+        "Tool",
+        filtered,
+        key=selection_key,
+        format_func=lambda name: name if name in READY_TOOLS else f"{name} · In build",
+    )
     st.divider()
     st.markdown("<div class='status-note'><strong>● Privacy-first workspace</strong><br>Your files stay within this session.</div>", unsafe_allow_html=True)
 
 group, description = TOOLS[selected]
-st.markdown(f"<div class='tool-header'><div class='tool-kicker'>{group} workspace</div><h1>{selected}</h1><p>{description}</p></div>", unsafe_allow_html=True)
+build_tag = "" if selected in READY_TOOLS else "<span class='build-tag'>In build</span>"
+st.markdown(
+    f"<div class='tool-header'><div class='tool-kicker'>{html.escape(group)} workspace</div>"
+    f"<div class='tool-title-row'><h1>{html.escape(selected)}</h1>{build_tag}</div>"
+    f"<p>{html.escape(description)}</p></div>",
+    unsafe_allow_html=True,
+)
 metric1, metric2 = st.columns(2)
 metric1.metric("Available tools", len(TOOLS))
 metric2.metric("Category", group)
