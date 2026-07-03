@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Corporate Tools Platform Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">CT</div>
+      <div>
+        <h1>Corporate Tools</h1>
+        <p>Free and paid business utilities</p>
+      </div>
+    </div>
+    <nav class="tool-nav" aria-label="Tools">
+      <button class="active" data-tool="csv">CSV Cleaner</button>
+      <button data-tool="files">Organize Files</button>
+      <button data-tool="extract">Data Extractor</button>
+      <button data-tool="hr">HR Toolkit</button>
+      <button data-tool="invoice">Invoice Generator</button>
+      <button data-tool="email">Email Templates</button>
+      <button data-tool="knowledge">Knowledge Assistant</button>
+      <button data-tool="pdf">PDF Suite</button>
+      <button data-tool="automation">Automation Studio</button>
+      <button data-tool="custom">Custom Tool Request</button>
+    </nav>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Phase 1 browser test</p>
+        <h2 id="pageTitle">CSV Cleaner</h2>
+      </div>
+      <div class="status-strip">
+        <span>Free tools</span>
+        <strong>8</strong>
+        <span>Advanced paid</span>
+        <strong>20</strong>
+      </div>
+    </header>
+
+    <section class="tool-panel active" id="tool-csv" data-title="CSV Cleaner">
+      <div class="panel-head">
+        <div>
+          <h3>Clean messy CSV data</h3>
+          <p>Paste CSV text, trim cells, normalize headers, remove duplicates, and download the result.</p>
+        </div>
+        <span class="plan-badge free">Free</span>
+      </div>
+      <div class="two-column">
+        <label class="field tall">
+          <span>Input CSV</span>
+          <textarea id="csvInput">Name, Email , Company
+Jasper, jasper@example.com , Acme
+Jasper, jasper@example.com , Acme
+Mira, mira@example.com , Orbit</textarea>
+        </label>
+        <label class="field tall">
+          <span>Cleaned CSV</span>
+          <textarea id="csvOutput" readonly></textarea>
+        </label>
+      </div>
+      <div class="actions">
+        <label class="check"><input type="checkbox" id="csvDedupe" checked> Remove duplicate rows</label>
+        <button class="primary" id="cleanCsvBtn">Clean CSV</button>
+        <button id="downloadCsvBtn">Download</button>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-files" data-title="Organize Files by Type">
+      <div class="panel-head">
+        <div>
+          <h3>Preview file organization</h3>
+          <p>Select files and see how they would be grouped before the backend moves or copies them.</p>
+        </div>
+        <span class="plan-badge free">Free</span>
+      </div>
+      <label class="drop-zone">
+        <input id="fileOrganizerInput" type="file" multiple>
+        <span>Select files to preview folders</span>
+      </label>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Type folder</th></tr></thead>
+          <tbody id="fileOrganizerRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-extract" data-title="Data Extractor">
+      <div class="panel-head">
+        <div>
+          <h3>Extract business fields from text</h3>
+          <p>Paste text from invoices, receipts, bank statements, PDFs, or OCR output.</p>
+        </div>
+        <span class="plan-badge paid">Paid OCR later</span>
+      </div>
+      <div class="two-column">
+        <label class="field tall">
+          <span>Document text</span>
+          <textarea id="extractInput">Invoice No: INV-1007
+Date: 25-06-2026
+Bill To: Acme Pvt Ltd
+Total: INR 24,500.00
+Email: finance@acme.com</textarea>
+        </label>
+        <div class="output-box">
+          <div class="output-head">
+            <span>Extracted fields</span>
+            <button id="downloadExtractBtn">Download JSON</button>
+          </div>
+          <pre id="extractOutput"></pre>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="extractBtn">Extract Data</button>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-hr" data-title="HR Toolkit">
+      <div class="panel-head">
+        <div>
+          <h3>Generate HR assets</h3>
+          <p>Test job descriptions, interview questions, evaluation templates, and simple resume parsing.</p>
+        </div>
+        <span class="plan-badge free">Free</span>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Role</span><input id="hrRole" value="Data Analyst"></label>
+        <label class="field"><span>Level</span><input id="hrLevel" value="Mid-level"></label>
+        <label class="field wide"><span>Skills</span><input id="hrSkills" value="SQL, Excel, Python, dashboards"></label>
+      </div>
+      <div class="actions">
+        <button class="primary" data-hr-action="jd">Job Description</button>
+        <button data-hr-action="questions">Interview Questions</button>
+        <button data-hr-action="evaluation">Evaluation Template</button>
+      </div>
+      <div class="two-column">
+        <label class="field tall">
+          <span>Resume text for parser</span>
+          <textarea id="resumeText">Asha Sharma
+asha@example.com
+5 years experience with SQL, Excel, Python, Power BI and stakeholder communication.</textarea>
+        </label>
+        <div class="output-box">
+          <div class="output-head"><span>HR output</span><button id="parseResumeBtn">Parse Resume</button></div>
+          <pre id="hrOutput"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-invoice" data-title="Invoice Generator">
+      <div class="panel-head">
+        <div>
+          <h3>Create invoice preview</h3>
+          <p>Enter invoice details and generate a browser preview that can later become PDF output.</p>
+        </div>
+        <span class="plan-badge free">Free</span>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Business</span><input id="bizName" value="Jasper Studio"></label>
+        <label class="field"><span>Client</span><input id="clientName" value="Acme Pvt Ltd"></label>
+        <label class="field"><span>Invoice No</span><input id="invoiceNo" value="INV-1001"></label>
+        <label class="field"><span>Tax rate</span><input id="taxRate" value="0.18"></label>
+        <label class="field wide"><span>Items, one per line: description | quantity | unit price</span><textarea id="invoiceItems">Website setup | 1 | 15000
+Monthly maintenance | 2 | 2500</textarea></label>
+      </div>
+      <div class="actions"><button class="primary" id="buildInvoiceBtn">Generate Invoice</button></div>
+      <div id="invoicePreview" class="invoice-preview"></div>
+    </section>
+
+    <section class="tool-panel" id="tool-email" data-title="Email Template Generator">
+      <div class="panel-head">
+        <div>
+          <h3>Generate business emails</h3>
+          <p>Choose a template and fill the variables for common corporate communication.</p>
+        </div>
+        <span class="plan-badge free">Free</span>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Template</span><select id="emailTemplate"><option>welcome</option><option>follow_up</option><option>meeting_request</option><option>invoice_reminder</option></select></label>
+        <label class="field"><span>Name</span><input id="emailName" value="Jasper"></label>
+        <label class="field"><span>Company</span><input id="emailCompany" value="Acme"></label>
+        <label class="field"><span>Topic</span><input id="emailTopic" value="the proposal"></label>
+        <label class="field"><span>Sender</span><input id="emailSender" value="Team"></label>
+      </div>
+      <div class="actions"><button class="primary" id="generateEmailBtn">Generate Email</button><button id="copyEmailBtn">Copy</button></div>
+      <pre id="emailOutput" class="output-box"></pre>
+    </section>
+
+    <section class="tool-panel" id="tool-knowledge" data-title="AI Knowledge Assistant">
+      <div class="panel-head">
+        <div>
+          <h3>Chat with uploaded documents</h3>
+          <p>Upload text-like files, ask a question, and retrieve the most relevant sections locally.</p>
+        </div>
+        <span class="plan-badge free">Free MVP</span>
+      </div>
+      <label class="drop-zone">
+        <input id="knowledgeFiles" type="file" multiple accept=".txt,.md,.csv,.json">
+        <span>Upload text documents</span>
+      </label>
+      <div class="form-grid">
+        <label class="field wide"><span>Question</span><input id="knowledgeQuestion" value="What does the document say about pricing?"></label>
+      </div>
+      <div class="actions"><button class="primary" id="askKnowledgeBtn">Ask</button></div>
+      <pre id="knowledgeOutput" class="output-box"></pre>
+    </section>
+
+    <section class="tool-panel" id="tool-pdf" data-title="PDF Suite">
+      <div class="panel-head">
+        <div>
+          <h3>PDF operations</h3>
+          <p>The Python backend already supports merge, split, compress, rotate, and extract text.</p>
+        </div>
+        <span class="plan-badge paid">Server tool</span>
+      </div>
+      <div class="server-grid">
+        <div><strong>Merge</strong><span>Combine PDFs in selected order.</span></div>
+        <div><strong>Split</strong><span>Export every page as a separate PDF.</span></div>
+        <div><strong>Compress</strong><span>Rewrite streams and reduce size where possible.</span></div>
+        <div><strong>Extract Text</strong><span>Pull readable text for search and chat.</span></div>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-automation" data-title="Automation Studio">
+      <div class="panel-head">
+        <div>
+          <h3>Transform office work into systems</h3>
+          <p>Choose an advanced tool, paste business input, and generate a structured workflow plan.</p>
+        </div>
+        <span class="plan-badge paid">Advanced suite</span>
+      </div>
+
+      <div class="goal-band">
+        <strong>Goal</strong>
+        <span>Eliminate manual office work by transforming business inputs into workflows, systems, documents, automations, insights, and deployable solutions with minimal user effort.</span>
+      </div>
+
+      <div class="automation-layout">
+        <div>
+          <div class="tool-card-grid" id="automationCards"></div>
+        </div>
+        <div class="automation-runner">
+          <div class="form-grid">
+            <label class="field wide">
+              <span>Advanced tool</span>
+              <select id="automationTool"></select>
+            </label>
+            <label class="field wide tall">
+              <span>Business input</span>
+              <textarea id="automationInput">Vendor A quoted INR 4,80,000 for implementation, 30 days delivery, includes support. Vendor B quoted INR 4,10,000, 45 days delivery, limited support. Need recommendation for a finance workflow automation project.</textarea>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" id="runAutomationBtn">Generate Structured Output</button>
+            <button id="downloadAutomationBtn">Download JSON</button>
+          </div>
+          <pre id="automationOutput" class="output-box"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="tool-custom" data-title="Custom Tool Request">
+      <div class="panel-head">
+        <div>
+          <h3>Request a private or public custom tool</h3>
+          <p>Capture demand, estimate complexity, and support marketplace revenue sharing later.</p>
+        </div>
+        <span class="plan-badge paid">Platform fee</span>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Tool name</span><input id="customName" value="Vendor Payment Tracker"></label>
+        <label class="field"><span>Visibility</span><select id="customVisibility"><option>Private</option><option>Public marketplace</option></select></label>
+        <label class="field wide tall"><span>What should it do?</span><textarea id="customBrief">Upload vendor invoices, track due dates, and export payment status reports.</textarea></label>
+      </div>
+      <div class="actions"><button class="primary" id="estimateCustomBtn">Estimate Request</button></div>
+      <pre id="customOutput" class="output-box"></pre>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
