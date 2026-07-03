@@ -56,7 +56,7 @@ from sop_to_automation import sop_automation
 from vendor_comparison import compare_vendors
 
 
-st.set_page_config(page_title="Corporate Tools Lab", page_icon="CT", layout="wide")
+st.set_page_config(page_title="Corporate Tools", page_icon="⚡", layout="wide")
 
 st.markdown(
     """
@@ -104,48 +104,83 @@ st.markdown(
     }
     * { letter-spacing: 0; }
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    .stApp { background: var(--ct-page); color: var(--ct-text); }
+    .stApp {
+      background:
+        radial-gradient(circle at 78% -10%, color-mix(in srgb, var(--ct-accent) 17%, transparent), transparent 31rem),
+        radial-gradient(circle at 22% 105%, color-mix(in srgb, #8b5cf6 10%, transparent), transparent 28rem),
+        var(--ct-page);
+      color: var(--ct-text);
+    }
     header[data-testid="stHeader"] { background: transparent; }
-    .block-container { max-width: 1180px; padding: 2.2rem 2.5rem 4rem; }
+    .block-container { max-width: 1240px; padding: 2.5rem 2.8rem 5rem; }
 
-    [data-testid="stSidebar"] { background: var(--ct-sidebar); border-right: 1px solid var(--ct-border); }
-    [data-testid="stSidebar"] > div:first-child { padding: 1.7rem 1.15rem; }
+    [data-testid="stSidebar"] {
+      background: color-mix(in srgb, var(--ct-sidebar) 94%, transparent);
+      border-right: 1px solid var(--ct-border);
+      backdrop-filter: blur(18px);
+    }
+    [data-testid="stSidebar"] > div:first-child { padding: 1.85rem 1.2rem; }
     [data-testid="stSidebar"] label, [data-testid="stSidebar"] p { color: var(--ct-secondary); }
-    .ct-brand { margin-bottom: 1.4rem; }
-    .ct-brand strong { display: block; color: var(--ct-text); font: 700 1.18rem 'Sora', sans-serif; }
-    .ct-brand span { color: var(--ct-muted); font-size: .78rem; }
+    .ct-brand { display: flex; align-items: center; gap: .75rem; margin: .1rem 0 1.65rem; }
+    .ct-brand-mark {
+      display: grid; place-items: center; width: 2.35rem; height: 2.35rem; flex: 0 0 auto;
+      border-radius: 12px; color: white; font: 700 1rem 'Sora', sans-serif;
+      background: linear-gradient(135deg, var(--ct-accent), #8b5cf6);
+      box-shadow: 0 8px 22px color-mix(in srgb, var(--ct-accent) 32%, transparent);
+    }
+    .ct-brand-copy strong { display: block; color: var(--ct-text); font: 700 1.02rem 'Sora', sans-serif; }
+    .ct-brand-copy span { color: var(--ct-muted); font-size: .72rem; }
 
     div[data-baseweb="input"], div[data-baseweb="select"] > div {
-      background: var(--ct-surface-2); border-color: var(--ct-border); border-radius: 10px;
+      background: var(--ct-surface-2); border-color: var(--ct-border); border-radius: 12px;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
     div[data-baseweb="input"] input, div[data-baseweb="select"] * { color: var(--ct-text); }
     div[data-baseweb="input"]:focus-within, div[data-baseweb="select"] > div:focus-within {
       border-color: var(--ct-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ct-accent) 20%, transparent);
     }
 
-    .tool-header { position: relative; padding: .1rem 0 .1rem 1.35rem; margin: .5rem 0 1.7rem; animation: ctBoot .45s ease both; }
-    .tool-header::before { content: ''; position: absolute; inset: 2px auto 2px 0; width: 4px; border-radius: 3px; background: linear-gradient(180deg, var(--ct-accent), #8b5cf6); animation: railPulse 4s ease-in-out infinite; }
-    .tool-header h1 { color: var(--ct-text); font: 700 1.9rem 'Sora', sans-serif; margin: 0; }
-    .tool-header p { color: var(--ct-secondary); font-size: .92rem; margin: .45rem 0 0; max-width: 620px; }
-    @keyframes ctBoot { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    @keyframes railPulse { 50% { filter: brightness(1.35); } }
+    .tool-header { position: relative; margin: .35rem 0 1.8rem; animation: ctBoot .55s cubic-bezier(.2,.8,.2,1) both; }
+    .tool-header::after { content: ''; position: absolute; width: 9rem; height: 9rem; right: 3%; top: -5rem; border-radius: 50%; background: var(--ct-accent); filter: blur(75px); opacity: .13; pointer-events: none; }
+    .tool-kicker { display: inline-flex; align-items: center; gap: .45rem; color: var(--ct-accent-light); font: 600 .7rem 'Sora', sans-serif; letter-spacing: .12em; text-transform: uppercase; margin-bottom: .7rem; }
+    .tool-kicker::before { content: ''; width: 1.5rem; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--ct-accent), #8b5cf6); }
+    .tool-header h1 { color: var(--ct-text); font: 700 clamp(2rem, 4vw, 3rem)/1.08 'Sora', sans-serif; letter-spacing: -.04em; margin: 0; }
+    .tool-header p { color: var(--ct-secondary); font-size: .98rem; line-height: 1.65; margin: .7rem 0 0; max-width: 680px; }
+    @keyframes ctBoot { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes ctShimmer { to { background-position: 200% center; } }
+    @keyframes ctFloat { 50% { transform: translateY(-3px); } }
 
-    .status-note { color: var(--ct-secondary); background: var(--ct-amber-bg); border: 1px solid color-mix(in srgb, var(--ct-amber) 34%, transparent); padding: .8rem; border-radius: 10px; font-size: .76rem; }
-    .status-note strong { color: var(--ct-amber); }
-    div[data-testid="stMetric"] { background: var(--ct-surface); border: 1px solid var(--ct-border); padding: 1rem 1.15rem; border-radius: 12px; transition: border-color .2s ease, transform .2s ease; }
-    div[data-testid="stMetric"]:hover { border-color: var(--ct-border-strong); transform: translateY(-1px); }
+    .status-note { color: var(--ct-secondary); background: var(--ct-success-bg); border: 1px solid color-mix(in srgb, var(--ct-success) 25%, transparent); padding: .85rem .9rem; border-radius: 12px; font-size: .75rem; line-height: 1.45; }
+    .status-note strong { color: var(--ct-success); }
+    div[data-testid="stMetric"] {
+      position: relative; overflow: hidden; background: color-mix(in srgb, var(--ct-surface) 92%, transparent);
+      border: 1px solid var(--ct-border); padding: 1.25rem 1.35rem; border-radius: 16px;
+      box-shadow: 0 10px 35px color-mix(in srgb, #000 7%, transparent);
+      transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+      animation: ctBoot .55s .08s cubic-bezier(.2,.8,.2,1) both;
+    }
+    div[data-testid="stMetric"]::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--ct-accent) 9%, transparent), transparent 65%); background-size: 200% 100%; opacity: 0; transition: opacity .25s; }
+    div[data-testid="stMetric"]:hover { border-color: color-mix(in srgb, var(--ct-accent) 55%, var(--ct-border)); transform: translateY(-4px); box-shadow: 0 16px 40px color-mix(in srgb, var(--ct-accent) 14%, transparent); }
+    div[data-testid="stMetric"]:hover::after { opacity: 1; animation: ctShimmer 1.2s linear; }
     div[data-testid="stMetric"] label { color: var(--ct-muted); text-transform: uppercase; font-size: .72rem; }
-    div[data-testid="stMetricValue"] { color: var(--ct-text); font-family: 'JetBrains Mono', monospace; }
+    div[data-testid="stMetricValue"] { color: var(--ct-text); font: 600 2rem 'Sora', sans-serif; letter-spacing: -.03em; }
 
-    .st-key-tool_panel { background: var(--ct-surface); border: 1px solid var(--ct-border) !important; border-radius: 14px !important; padding: 1.45rem 1.55rem; margin-top: 1.55rem; }
-    .stButton > button, .stDownloadButton > button { border-radius: 10px; border: 1px solid var(--ct-border-strong); transition: transform .12s ease, box-shadow .15s ease, border-color .15s ease; }
-    .stButton > button[kind="primary"] { background: var(--ct-accent); color: white; border-color: var(--ct-accent); }
-    .stButton > button:hover, .stDownloadButton > button:hover { border-color: var(--ct-accent); box-shadow: 0 4px 16px color-mix(in srgb, var(--ct-accent) 25%, transparent); }
+    .st-key-tool_panel { background: color-mix(in srgb, var(--ct-surface) 94%, transparent); border: 1px solid var(--ct-border) !important; border-radius: 18px !important; padding: 1.65rem 1.75rem; margin-top: 1.7rem; box-shadow: 0 18px 55px color-mix(in srgb, #000 8%, transparent); animation: ctBoot .55s .15s cubic-bezier(.2,.8,.2,1) both; }
+    .stButton > button, .stDownloadButton > button { min-height: 2.75rem; border-radius: 12px; border: 1px solid var(--ct-border-strong); font-weight: 600; transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+    .stButton > button[kind="primary"] { background: linear-gradient(135deg, var(--ct-accent), #7c3aed); color: white; border-color: transparent; box-shadow: 0 8px 20px color-mix(in srgb, var(--ct-accent) 25%, transparent); }
+    .stButton > button:hover, .stDownloadButton > button:hover { border-color: var(--ct-accent); transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--ct-accent) 24%, transparent); }
     .stButton > button:active, .stDownloadButton > button:active { transform: scale(.98); }
     [data-baseweb="tab-list"] { border-bottom: 1px solid var(--ct-border); gap: 1.3rem; }
     [data-baseweb="tab"] { color: var(--ct-muted); }
     [aria-selected="true"][data-baseweb="tab"] { color: var(--ct-text); }
-    [data-testid="stDataFrame"], [data-testid="stFileUploaderDropzone"] { border-color: var(--ct-border); border-radius: 10px; }
+    [data-testid="stDataFrame"], [data-testid="stFileUploaderDropzone"] { border-color: var(--ct-border); border-radius: 14px; }
+    [data-testid="stFileUploaderDropzone"] { background: var(--ct-surface-2); transition: border-color .2s ease, background .2s ease; }
+    [data-testid="stFileUploaderDropzone"]:hover { border-color: var(--ct-accent); background: var(--ct-accent-bg); }
+    [data-testid="stExpander"] { background: var(--ct-surface-2); border-color: var(--ct-border); border-radius: 12px; overflow: hidden; }
+    [data-testid="stAlert"] { border-radius: 12px; }
+    hr { border-color: var(--ct-border) !important; }
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-thumb { background: var(--ct-border-strong); border-radius: 9px; border: 2px solid var(--ct-page); }
 
     .news-item { background: var(--ct-surface); border: 1px solid var(--ct-border); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: .65rem; transition: border-color .18s ease, background .18s ease, transform .18s ease; animation: ctBoot .35s ease both; }
     .news-item:hover { border-color: var(--ct-accent); background: var(--ct-surface-2); transform: translateX(3px); }
@@ -155,8 +190,11 @@ st.markdown(
 
     @media (max-width: 760px) {
       .block-container { padding: 1.5rem 1rem 3rem; }
-      .tool-header h1 { font-size: 1.5rem; }
+      .tool-header h1 { font-size: 1.8rem; }
       .st-key-tool_panel { padding: 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
     </style>
     """,
@@ -517,7 +555,7 @@ def spreadsheet_discovery_tool(name: str) -> None:
 
 
 with st.sidebar:
-    st.markdown("<div class='ct-brand'><strong>Corporate Tools</strong><span>Unified testing workspace</span></div>", unsafe_allow_html=True)
+    st.markdown("<div class='ct-brand'><div class='ct-brand-mark'>N</div><div class='ct-brand-copy'><strong>Corporate Tools</strong><span>Work smarter, in one place</span></div></div>", unsafe_allow_html=True)
     search = st.text_input("Search tools", placeholder="invoice, PDF, HR...")
     categories = ["All"] + sorted({category for category, _ in TOOLS.values()})
     category = st.selectbox("Category", categories)
@@ -528,10 +566,10 @@ with st.sidebar:
     selection_key = f"tool_{category}_{search.strip().lower()}"
     selected = st.selectbox("Tool", filtered, key=selection_key)
     st.divider()
-    st.markdown("<div class='status-note'>Local MVP<br><strong>No customer data is uploaded to a cloud service.</strong></div>", unsafe_allow_html=True)
+    st.markdown("<div class='status-note'><strong>● Privacy-first workspace</strong><br>Your files stay within this session.</div>", unsafe_allow_html=True)
 
 group, description = TOOLS[selected]
-st.markdown(f"<div class='tool-header'><h1>{selected}</h1><p>{description}</p></div>", unsafe_allow_html=True)
+st.markdown(f"<div class='tool-header'><div class='tool-kicker'>{group} workspace</div><h1>{selected}</h1><p>{description}</p></div>", unsafe_allow_html=True)
 metric1, metric2 = st.columns(2)
 metric1.metric("Available tools", len(TOOLS))
 metric2.metric("Category", group)
