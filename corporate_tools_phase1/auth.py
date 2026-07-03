@@ -6,6 +6,7 @@ import base64
 import hashlib
 import hmac
 import html
+from pathlib import Path
 import time
 
 import streamlit as st
@@ -44,44 +45,55 @@ def require_login() -> str:
         return str(st.session_state["username"])
 
     users = _configured_users()
-    st.markdown(
-        "<div class='auth-hero'><div class='auth-mark'>N</div>"
-        "<div class='tool-kicker'>Secure workspace</div>"
-        "<h1>Welcome back</h1><p>Sign in to access Corporate Tools.</p></div>",
-        unsafe_allow_html=True,
-    )
-    if not users:
-        st.error("Authentication is not configured. Add the user hashes to Streamlit Secrets.")
-        st.code('[auth.users]\nbhawna = "scrypt$..."\njaspreet = "scrypt$..."', language="toml")
-        st.stop()
-
     locked_until = float(st.session_state.get("login_locked_until", 0))
     remaining = max(0, int(locked_until - time.monotonic()))
-    with st.form("login_form", clear_on_submit=False):
-        username = st.text_input("Username", autocomplete="username")
-        password = st.text_input("Password", type="password", autocomplete="current-password")
-        submitted = st.form_submit_button("Sign in", type="primary", use_container_width=True, disabled=remaining > 0)
+    with st.container(key="auth_shell"):
+        visual_col, login_col = st.columns([1.08, 0.92], gap="large", vertical_alignment="center")
+        with visual_col:
+            with st.container(key="auth_visual"):
+                st.image(Path(__file__).parent / "assets" / "login-workspace.webp", use_container_width=True)
+                st.markdown(
+                    "<div class='auth-visual-copy'><span>One secure workspace</span>"
+                    "<h2>Turn busywork into momentum.</h2>"
+                    "<p>Research, documents, finance and automation tools—connected in one focused place.</p>"
+                    "<div class='auth-features'><b>34 tools</b><b>Private sessions</b><b>Fast exports</b></div></div>",
+                    unsafe_allow_html=True,
+                )
+        with login_col:
+            st.markdown(
+                "<div class='auth-hero'><div class='auth-mark'>N</div>"
+                "<div class='tool-kicker'>Secure workspace</div>"
+                "<h1>Welcome back</h1><p>Sign in to continue to your corporate toolkit.</p></div>",
+                unsafe_allow_html=True,
+            )
+            if not users:
+                st.error("Authentication is not configured. Add the user hashes to Streamlit Secrets.")
+                st.code('[auth.users]\nbhawna = "scrypt$..."\njaspreet = "scrypt$..."', language="toml")
+                st.stop()
+            with st.form("login_form", clear_on_submit=False):
+                username = st.text_input("Username", placeholder="Enter your username", autocomplete="username")
+                password = st.text_input("Password", type="password", placeholder="Enter your password", autocomplete="current-password")
+                submitted = st.form_submit_button("Sign in securely", type="primary", use_container_width=True, disabled=remaining > 0)
 
-    if remaining > 0:
-        st.warning(f"Too many unsuccessful attempts. Try again in {remaining} seconds.")
-    elif submitted:
-        normalized = username.strip().lower()
-        stored_hash = users.get(normalized, "")
-        if stored_hash and verify_password(password, stored_hash):
-            st.session_state["authenticated"] = True
-            st.session_state["username"] = normalized
-            st.session_state["login_attempts"] = 0
-            st.session_state.pop("login_locked_until", None)
-            st.rerun()
-        else:
-            attempts = int(st.session_state.get("login_attempts", 0)) + 1
-            st.session_state["login_attempts"] = attempts
-            if attempts >= MAX_ATTEMPTS:
-                st.session_state["login_attempts"] = 0
-                st.session_state["login_locked_until"] = time.monotonic() + LOCK_SECONDS
-                st.error("Too many unsuccessful attempts. Sign-in is temporarily locked.")
-            else:
-                st.error("Incorrect username or password.")
+            if remaining > 0:
+                st.warning(f"Too many unsuccessful attempts. Try again in {remaining} seconds.")
+            elif submitted:
+                normalized = username.strip().lower()
+                stored_hash = users.get(normalized, "")
+                if stored_hash and verify_password(password, stored_hash):
+                    st.session_state["authenticated"] = True
+                    st.session_state["username"] = normalized
+                    st.session_state["login_attempts"] = 0
+                    st.session_state.pop("login_locked_until", None)
+                    st.rerun()
+                attempts = int(st.session_state.get("login_attempts", 0)) + 1
+                st.session_state["login_attempts"] = attempts
+                if attempts >= MAX_ATTEMPTS:
+                    st.session_state["login_attempts"] = 0
+                    st.session_state["login_locked_until"] = time.monotonic() + LOCK_SECONDS
+                    st.error("Too many unsuccessful attempts. Sign-in is temporarily locked.")
+                else:
+                    st.error("Incorrect username or password.")
     st.stop()
 
 

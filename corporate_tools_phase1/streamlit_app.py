@@ -193,13 +193,23 @@ st.markdown(
     .news-item a:hover { text-decoration: underline; }
     .news-meta { color: var(--ct-muted); font: .72rem 'JetBrains Mono', monospace; margin-top: .4rem; }
 
-    .auth-hero { max-width: 430px; margin: 7vh auto 1.4rem; text-align: center; animation: ctBoot .55s cubic-bezier(.2,.8,.2,1) both; }
-    .auth-mark { display: grid; place-items: center; width: 3.3rem; height: 3.3rem; margin: 0 auto 1.2rem; border-radius: 16px; background: linear-gradient(135deg, var(--ct-accent), #8b5cf6); color: white; font: 700 1.3rem 'Sora', sans-serif; box-shadow: 0 12px 30px color-mix(in srgb, var(--ct-accent) 32%, transparent); animation: ctFloat 4s ease-in-out infinite; }
-    .auth-hero .tool-kicker { justify-content: center; }
+    .st-key-auth_shell { max-width: 1120px; margin: 4vh auto 0; }
+    .st-key-auth_visual { position: relative; overflow: hidden; min-height: 620px; padding: 1.4rem; border: 1px solid color-mix(in srgb, var(--ct-accent) 28%, transparent); border-radius: 28px; background: #080d32; box-shadow: 0 25px 70px color-mix(in srgb, #11184f 25%, transparent); }
+    .st-key-auth_visual [data-testid="stImage"] { margin: -1.4rem -1.4rem 0; }
+    .st-key-auth_visual [data-testid="stImage"] img { width: calc(100% + 2.8rem); max-height: 430px; object-fit: cover; object-position: center 54%; mask-image: linear-gradient(to bottom, black 68%, transparent 100%); }
+    .auth-visual-copy { position: relative; z-index: 1; padding: 0 .5rem .3rem; color: #fff; }
+    .auth-visual-copy span { color: #a5b4fc; font: 600 .68rem 'Sora', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .auth-visual-copy h2 { max-width: 430px; margin: .55rem 0 .65rem; color: #fff; font: 700 2rem/1.15 'Sora', sans-serif; letter-spacing: -.04em; }
+    .auth-visual-copy p { max-width: 470px; margin: 0; color: #aeb8dc; font-size: .86rem; line-height: 1.6; }
+    .auth-features { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.1rem; }
+    .auth-features b { padding: .42rem .65rem; border: 1px solid rgba(165,180,252,.18); border-radius: 999px; background: rgba(99,102,241,.12); color: #dbe3ff; font-size: .66rem; font-weight: 600; }
+    .auth-hero { max-width: 430px; margin: 0 0 1.4rem; text-align: left; animation: ctBoot .55s cubic-bezier(.2,.8,.2,1) both; }
+    .auth-mark { display: grid; place-items: center; width: 3.3rem; height: 3.3rem; margin: 0 0 1.2rem; border-radius: 16px; background: linear-gradient(135deg, var(--ct-accent), #8b5cf6); color: white; font: 700 1.3rem 'Sora', sans-serif; box-shadow: 0 12px 30px color-mix(in srgb, var(--ct-accent) 32%, transparent); animation: ctFloat 4s ease-in-out infinite; }
     .auth-hero .tool-kicker::before { display: none; }
-    .auth-hero h1 { color: var(--ct-text); font: 700 2.3rem 'Sora', sans-serif; letter-spacing: -.04em; margin: .2rem 0 .5rem; }
-    .auth-hero p { color: var(--ct-secondary); margin: 0; }
-    .st-key-login_form { max-width: 430px; margin: 0 auto; padding: 1.5rem 1.6rem; border: 1px solid var(--ct-border); border-radius: 18px; background: color-mix(in srgb, var(--ct-surface) 94%, transparent); box-shadow: 0 20px 55px color-mix(in srgb, #000 10%, transparent); animation: ctBoot .55s .08s cubic-bezier(.2,.8,.2,1) both; }
+    .auth-hero h1 { color: var(--ct-text); font: 700 2.45rem 'Sora', sans-serif; letter-spacing: -.045em; margin: .2rem 0 .5rem; }
+    .auth-hero p { color: var(--ct-secondary); line-height: 1.6; margin: 0; }
+    .st-key-login_form { max-width: 430px; margin: 0; padding: 1.5rem 1.6rem; border: 1px solid var(--ct-border); border-radius: 18px; background: color-mix(in srgb, var(--ct-surface) 94%, transparent); box-shadow: 0 20px 55px color-mix(in srgb, #000 10%, transparent); animation: ctBoot .55s .08s cubic-bezier(.2,.8,.2,1) both; }
+    [data-testid="stFormSubmitButton"] > button { background: linear-gradient(135deg, var(--ct-accent), #7c3aed) !important; border-color: transparent !important; color: white !important; }
     .account-note { display: flex; justify-content: space-between; align-items: center; margin: .7rem 0; color: var(--ct-muted); font-size: .72rem; }
     .account-note strong { color: var(--ct-text); font-size: .76rem; }
 
@@ -207,6 +217,12 @@ st.markdown(
       .block-container { padding: 1.5rem 1rem 3rem; }
       .tool-header h1 { font-size: 1.8rem; }
       .st-key-tool_panel { padding: 1rem; }
+      .st-key-auth_shell { margin-top: 2vh; }
+      .st-key-auth_visual { display: none; }
+      .auth-hero { margin: 5vh auto 1.25rem; text-align: center; }
+      .auth-mark { margin-left: auto; margin-right: auto; }
+      .auth-hero .tool-kicker { justify-content: center; }
+      .st-key-login_form { margin: 0 auto; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
