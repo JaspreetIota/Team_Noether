@@ -662,9 +662,39 @@ def research_tool(name: str) -> None:
     else:
         raw = st.text_area("Patent document numbers", placeholder="US12345678B2\nEP1234567A1", height=180)
         numbers = [value.strip() for value in raw.replace(",", "\n").splitlines() if value.strip()]
+        fetch_depth = st.radio(
+            "Fetch depth",
+            ["Quick", "Standard", "Complete", "Custom"],
+            index=1,
+            horizontal=True,
+            help="Quick returns the core profile only. Deeper modes parse more sections and may take longer.",
+        )
+        group_labels = {
+            "Translate names and assignees": "translations",
+            "Legal events, assignments and litigation": "legal",
+            "Classifications, landscapes and keywords": "classifications",
+            "Claims": "claims",
+            "Patent family and priority applications": "family",
+            "Patent and non-patent citations": "citations",
+            "Similar and related documents": "related",
+            "Full description and drawing links": "full_text_media",
+        }
+        standard_groups = {"translations", "legal", "classifications", "family", "citations"}
+        if fetch_depth == "Quick":
+            detail_groups = set()
+            st.caption("Fastest: title, abstract, inventors, assignees, status, dates, expiration and links.")
+        elif fetch_depth == "Standard":
+            detail_groups = standard_groups
+            st.caption("Recommended: core profile plus translations, legal history, classifications, family and citations.")
+        elif fetch_depth == "Complete":
+            detail_groups = set(group_labels.values())
+            st.caption("Everything available, including claims, full description and drawing links.")
+        else:
+            chosen_groups = st.multiselect("Choose optional detail groups", list(group_labels), default=["Legal events, assignments and litigation"])
+            detail_groups = {group_labels[label] for label in chosen_groups}
         if st.button("Fetch patents", type="primary", disabled=not numbers):
-            with st.spinner("Collecting public patent metadata..."):
-                result = fetch_patents(numbers)
+            with st.spinner(f"Collecting {fetch_depth.lower()} patent data..."):
+                result = fetch_patents(numbers, detail_groups)
             patents = result["patents"]
             summary_records = []
             for patent in patents:
@@ -686,11 +716,16 @@ def research_tool(name: str) -> None:
                     "grant_date": patent.get("grant_date", ""),
                     "adjusted_expiration": patent.get("adjusted_expiration", ""),
                     "anticipated_expiration": patent.get("anticipated_expiration", ""),
+                    "claim_count": patent.get("claim_count", ""),
+                    "classification_count": len(patent.get("classifications", [])),
+                    "family_application_count": len(patent.get("family_applications", [])),
+                    "patent_citation_count": len(patent.get("patent_citations", [])),
+                    "cited_by_count": len(patent.get("cited_by", [])),
                     "legal_event_count": len(patent.get("legal_events", [])),
                     "pdf": patent.get("pdf", ""),
                     "google_patents_url": patent.get("google_patents_url", ""),
                 })
-            summary_tab, details_tab = st.tabs(["Patent summary & exports", "Legal details"])
+            summary_tab, details_tab = st.tabs(["Patent summary & exports", "Selected details"])
             with summary_tab:
                 table_downloads(
                     summary_records,
@@ -698,6 +733,8 @@ def research_tool(name: str) -> None:
                     {"pdf": "Patent PDF", "google_patents_url": "Google Patents"},
                 )
             with details_tab:
+                st.caption(f"Fetched optional groups: {', '.join(result['detail_groups_fetched']) or 'none (Quick mode)'}")
+                download_json(result, "patent_intelligence_complete.json")
                 for patent in patents:
                     label = f"{patent.get('document_number', 'Patent')} — {patent.get('legal_status') or patent.get('availability', '')}"
                     with st.expander(label):
