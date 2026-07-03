@@ -532,10 +532,9 @@ with st.sidebar:
 
 group, description = TOOLS[selected]
 st.markdown(f"<div class='tool-header'><h1>{selected}</h1><p>{description}</p></div>", unsafe_allow_html=True)
-metric1, metric2, metric3 = st.columns(3)
+metric1, metric2 = st.columns(2)
 metric1.metric("Available tools", len(TOOLS))
 metric2.metric("Category", group)
-metric3.metric("Runtime", "Local Python")
 
 with st.container(border=True, key="tool_panel"):
     try:
