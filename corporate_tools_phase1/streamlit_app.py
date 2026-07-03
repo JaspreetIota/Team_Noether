@@ -665,7 +665,51 @@ def research_tool(name: str) -> None:
         if st.button("Fetch patents", type="primary", disabled=not numbers):
             with st.spinner("Collecting public patent metadata..."):
                 result = fetch_patents(numbers)
-            table_downloads(result["patents"], "patent_intelligence", {"pdf": "Patent PDF"})
+            patents = result["patents"]
+            summary_records = []
+            for patent in patents:
+                summary_records.append({
+                    "document_number": patent.get("document_number", ""),
+                    "document_number_used": patent.get("document_number_used", ""),
+                    "availability": patent.get("availability", ""),
+                    "title": patent.get("title", ""),
+                    "inventors": "; ".join(patent.get("inventors", [])),
+                    "inventors_translated": "; ".join(patent.get("inventors_translated", [])),
+                    "original_assignees": "; ".join(patent.get("assignees_original", [])),
+                    "current_assignees": "; ".join(patent.get("assignees_current", [])),
+                    "translated_assignees": "; ".join(patent.get("assignees_translated", [])),
+                    "legal_status": patent.get("legal_status", ""),
+                    "application_number": patent.get("application_number", ""),
+                    "priority_date": patent.get("priority_date", ""),
+                    "filing_date": patent.get("filing_date", ""),
+                    "publication_date": patent.get("publication_date", ""),
+                    "grant_date": patent.get("grant_date", ""),
+                    "adjusted_expiration": patent.get("adjusted_expiration", ""),
+                    "anticipated_expiration": patent.get("anticipated_expiration", ""),
+                    "legal_event_count": len(patent.get("legal_events", [])),
+                    "pdf": patent.get("pdf", ""),
+                    "google_patents_url": patent.get("google_patents_url", ""),
+                })
+            summary_tab, details_tab = st.tabs(["Patent summary & exports", "Legal details"])
+            with summary_tab:
+                table_downloads(
+                    summary_records,
+                    "patent_intelligence",
+                    {"pdf": "Patent PDF", "google_patents_url": "Google Patents"},
+                )
+            with details_tab:
+                for patent in patents:
+                    label = f"{patent.get('document_number', 'Patent')} — {patent.get('legal_status') or patent.get('availability', '')}"
+                    with st.expander(label):
+                        if patent.get("abstract"):
+                            st.markdown("#### Abstract")
+                            st.write(patent["abstract"])
+                        events = patent.get("legal_events", [])
+                        if events:
+                            st.markdown("#### Legal-event history")
+                            st.dataframe(events, use_container_width=True, hide_index=True)
+                        st.markdown("#### Complete record")
+                        st.json(patent, expanded=False)
 
 
 def spreadsheet_discovery_tool(name: str) -> None:
