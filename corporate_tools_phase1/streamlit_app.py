@@ -208,6 +208,7 @@ st.markdown(
     .auth-hero .tool-kicker::before { display: none; }
     .auth-hero h1 { color: var(--ct-text); font: 700 2.45rem 'Sora', sans-serif; letter-spacing: -.045em; margin: .2rem 0 .5rem; }
     .auth-hero p { color: var(--ct-secondary); line-height: 1.6; margin: 0; }
+    .auth-byline { margin-top: .65rem; color: var(--ct-muted); font: 500 .72rem 'Sora', sans-serif; letter-spacing: .04em; }
     .st-key-login_form { max-width: 430px; margin: 0; padding: 1.5rem 1.6rem; border: 1px solid var(--ct-border); border-radius: 18px; background: color-mix(in srgb, var(--ct-surface) 94%, transparent); box-shadow: 0 20px 55px color-mix(in srgb, #000 10%, transparent); animation: ctBoot .55s .08s cubic-bezier(.2,.8,.2,1) both; }
     [data-testid="stFormSubmitButton"] > button { background: linear-gradient(135deg, var(--ct-accent), #7c3aed) !important; border-color: transparent !important; color: white !important; }
     .account-note { display: flex; justify-content: space-between; align-items: center; margin: .7rem 0; color: var(--ct-muted); font-size: .72rem; }
