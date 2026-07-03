@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
 
 from activity_to_training import training_material
 from audit_engine import audit_package
+from auth import render_account, require_login
 from category_lister import list_categories
 from company_finance_lookup import lookup_company
 from contract_analyzer import analyze_contract
@@ -170,10 +171,10 @@ st.markdown(
     div[data-testid="stMetricValue"] { color: var(--ct-text); font: 600 2rem 'Sora', sans-serif; letter-spacing: -.03em; }
 
     .st-key-tool_panel { background: color-mix(in srgb, var(--ct-surface) 94%, transparent); border: 1px solid var(--ct-border) !important; border-radius: 18px !important; padding: 1.65rem 1.75rem; margin-top: 1.7rem; box-shadow: 0 18px 55px color-mix(in srgb, #000 8%, transparent); animation: ctBoot .55s .15s cubic-bezier(.2,.8,.2,1) both; }
-    .stButton > button, .stDownloadButton > button { min-height: 2.75rem; border-radius: 12px; border: 1px solid var(--ct-border-strong); font-weight: 600; transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
-    .stButton > button[kind="primary"] { background: linear-gradient(135deg, var(--ct-accent), #7c3aed); color: white; border-color: transparent; box-shadow: 0 8px 20px color-mix(in srgb, var(--ct-accent) 25%, transparent); }
-    .stButton > button:hover, .stDownloadButton > button:hover { border-color: var(--ct-accent); transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--ct-accent) 24%, transparent); }
-    .stButton > button:active, .stDownloadButton > button:active { transform: scale(.98); }
+    .stButton > button, .stDownloadButton > button, .stFormSubmitButton > button { min-height: 2.75rem; border-radius: 12px; border: 1px solid var(--ct-border-strong); font-weight: 600; transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+    .stButton > button[kind="primary"], .stFormSubmitButton > button[kind="primary"] { background: linear-gradient(135deg, var(--ct-accent), #7c3aed); color: white; border-color: transparent; box-shadow: 0 8px 20px color-mix(in srgb, var(--ct-accent) 25%, transparent); }
+    .stButton > button:hover, .stDownloadButton > button:hover, .stFormSubmitButton > button:hover { border-color: var(--ct-accent); transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--ct-accent) 24%, transparent); }
+    .stButton > button:active, .stDownloadButton > button:active, .stFormSubmitButton > button:active { transform: scale(.98); }
     [data-baseweb="tab-list"] { border-bottom: 1px solid var(--ct-border); gap: 1.3rem; }
     [data-baseweb="tab"] { color: var(--ct-muted); }
     [aria-selected="true"][data-baseweb="tab"] { color: var(--ct-text); }
@@ -192,6 +193,16 @@ st.markdown(
     .news-item a:hover { text-decoration: underline; }
     .news-meta { color: var(--ct-muted); font: .72rem 'JetBrains Mono', monospace; margin-top: .4rem; }
 
+    .auth-hero { max-width: 430px; margin: 7vh auto 1.4rem; text-align: center; animation: ctBoot .55s cubic-bezier(.2,.8,.2,1) both; }
+    .auth-mark { display: grid; place-items: center; width: 3.3rem; height: 3.3rem; margin: 0 auto 1.2rem; border-radius: 16px; background: linear-gradient(135deg, var(--ct-accent), #8b5cf6); color: white; font: 700 1.3rem 'Sora', sans-serif; box-shadow: 0 12px 30px color-mix(in srgb, var(--ct-accent) 32%, transparent); animation: ctFloat 4s ease-in-out infinite; }
+    .auth-hero .tool-kicker { justify-content: center; }
+    .auth-hero .tool-kicker::before { display: none; }
+    .auth-hero h1 { color: var(--ct-text); font: 700 2.3rem 'Sora', sans-serif; letter-spacing: -.04em; margin: .2rem 0 .5rem; }
+    .auth-hero p { color: var(--ct-secondary); margin: 0; }
+    .st-key-login_form { max-width: 430px; margin: 0 auto; padding: 1.5rem 1.6rem; border: 1px solid var(--ct-border); border-radius: 18px; background: color-mix(in srgb, var(--ct-surface) 94%, transparent); box-shadow: 0 20px 55px color-mix(in srgb, #000 10%, transparent); animation: ctBoot .55s .08s cubic-bezier(.2,.8,.2,1) both; }
+    .account-note { display: flex; justify-content: space-between; align-items: center; margin: .7rem 0; color: var(--ct-muted); font-size: .72rem; }
+    .account-note strong { color: var(--ct-text); font-size: .76rem; }
+
     @media (max-width: 760px) {
       .block-container { padding: 1.5rem 1rem 3rem; }
       .tool-header h1 { font-size: 1.8rem; }
@@ -205,6 +216,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+current_user = require_login()
 
 TEXT_TOOLS = {
     "Vendor Comparison": ("Procurement", "Compare proposals, pricing, features, and risks.", compare_vendors),
@@ -695,6 +707,8 @@ with st.sidebar:
     st.divider()
     st.markdown("<div class='status-note'><strong>● Privacy-first workspace</strong><br>Your files stay within this session.</div>", unsafe_allow_html=True)
 
+    render_account(current_user)
+
 group, description = TOOLS[selected]
 build_tag = "" if selected in READY_TOOLS else "<span class='build-tag'>In build</span>"
 st.markdown(
@@ -703,6 +717,7 @@ st.markdown(
     f"<p>{html.escape(description)}</p></div>",
     unsafe_allow_html=True,
 )
+
 metric1, metric2 = st.columns(2)
 metric1.metric("Available tools", len(TOOLS))
 metric2.metric("Category", group)
