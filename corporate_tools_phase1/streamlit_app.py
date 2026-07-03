@@ -195,9 +195,8 @@ st.markdown(
 
     .st-key-auth_shell { max-width: 1120px; margin: 4vh auto 0; }
     .st-key-auth_visual { position: relative; overflow: hidden; min-height: 620px; padding: 0; border: 1px solid color-mix(in srgb, var(--ct-accent) 28%, transparent); border-radius: 28px; background: #080d32; box-shadow: 0 25px 70px color-mix(in srgb, #11184f 25%, transparent); }
-    .st-key-auth_visual [data-testid="stImage"] { width: 100%; margin: 0; }
-    .st-key-auth_visual [data-testid="stImage"] > div { width: 100%; }
-    .st-key-auth_visual [data-testid="stImage"] img { display: block; width: 100% !important; max-height: 430px; object-fit: cover; object-position: center 54%; mask-image: linear-gradient(to bottom, black 68%, transparent 100%); }
+    .auth-art { width: 100%; height: 430px; margin: 0; overflow: hidden; }
+    .auth-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 54%; mask-image: linear-gradient(to bottom, black 68%, transparent 100%); }
     .auth-visual-copy { position: relative; z-index: 1; padding: 0 2rem 1.7rem; color: #fff; }
     .auth-visual-copy span { color: #a5b4fc; font: 600 .68rem 'Sora', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
     .auth-visual-copy h2 { max-width: 430px; margin: .55rem 0 .65rem; color: #fff; font: 700 2rem/1.15 'Sora', sans-serif; letter-spacing: -.04em; }

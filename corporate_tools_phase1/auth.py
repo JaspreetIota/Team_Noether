@@ -51,7 +51,13 @@ def require_login() -> str:
         visual_col, login_col = st.columns([1.08, 0.92], gap="large", vertical_alignment="center")
         with visual_col:
             with st.container(key="auth_visual"):
-                st.image(Path(__file__).parent / "assets" / "login-workspace.webp", use_container_width=True)
+                visual_path = Path(__file__).parent / "assets" / "login-workspace.webp"
+                visual_data = base64.b64encode(visual_path.read_bytes()).decode("ascii")
+                st.markdown(
+                    f"<div class='auth-art'><img src='data:image/webp;base64,{visual_data}' "
+                    "alt='Connected corporate tools illustration'></div>",
+                    unsafe_allow_html=True,
+                )
                 st.markdown(
                     "<div class='auth-visual-copy'><span>One secure workspace</span>"
                     "<h2>Turn busywork into momentum.</h2>"
