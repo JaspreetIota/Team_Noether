@@ -258,6 +258,8 @@ READY_TOOLS = {
     "Excel Splitter",
 }
 
+DEFAULT_TOOL = "Company Finance Lookup"
+
 
 def save_upload(upload, folder: Path) -> Path:
     path = folder / Path(upload.name).name
@@ -267,6 +269,32 @@ def save_upload(upload, folder: Path) -> Path:
 
 def download_json(data: object, name: str = "result.json") -> None:
     st.download_button("Download JSON", json.dumps(data, indent=2, default=str), name, "application/json")
+
+
+def finance_value(value: object, currency: str = "") -> str:
+    """Format Yahoo Finance values for compact overview metrics."""
+    if value in (None, "", "N/A"):
+        return "—"
+    if isinstance(value, (int, float)):
+        prefix = f"{currency} " if currency else ""
+        absolute = abs(value)
+        if absolute >= 1_000_000_000_000:
+            return f"{prefix}{value / 1_000_000_000_000:.2f}T"
+        if absolute >= 1_000_000_000:
+            return f"{prefix}{value / 1_000_000_000:.2f}B"
+        if absolute >= 1_000_000:
+            return f"{prefix}{value / 1_000_000:.2f}M"
+        if isinstance(value, int):
+            return f"{prefix}{value:,}"
+        return f"{prefix}{value:,.2f}"
+    return str(value)
+
+
+def show_yahoo_module(info: dict, module: str, title: str) -> None:
+    data = info.get(module)
+    if data:
+        with st.expander(title):
+            st.json(data, expanded=True)
 
 
 def render_result(data: object) -> None:
@@ -539,9 +567,86 @@ def research_tool(name: str) -> None:
         if st.button("Look up company", type="primary", disabled=not company.strip()):
             with st.spinner("Looking up public company data..."):
                 result = lookup_company(company)
-            table_downloads(result["matches"], "company_lookup")
-            with st.expander("Top company profile"):
-                st.json(result["top_company_profile"], expanded=False)
+            matches = result["matches"]
+            if not matches:
+                st.warning(f"No public company was found for {company}.")
+                return
+
+            info = result["company_info"]
+            profile = info.get("assetProfile", {})
+            price = info.get("price", {})
+            summary = info.get("summaryDetail", {})
+            financial = info.get("financialData", {})
+            company_name = price.get("longName") or matches[0].get("name") or company
+            symbol = result["symbol"]
+            currency = price.get("currency", "")
+
+            st.subheader(f"{company_name} ({symbol})")
+            st.caption("Detailed company information supplied by Yahoo Finance")
+            metric_cols = st.columns(4)
+            metric_cols[0].metric("Market price", finance_value(price.get("regularMarketPrice"), currency))
+            metric_cols[1].metric("Market cap", finance_value(summary.get("marketCap"), currency))
+            metric_cols[2].metric("Revenue", finance_value(financial.get("totalRevenue"), currency))
+            metric_cols[3].metric("Employees", finance_value(profile.get("fullTimeEmployees")))
+
+            overview_tab, finance_tab, statements_tab, ownership_tab, raw_tab = st.tabs(
+                ["Company overview", "Market & financials", "Statements & trends", "Ownership & filings", "Complete Yahoo data"]
+            )
+            with overview_tab:
+                if profile.get("longBusinessSummary"):
+                    st.markdown("#### Business summary")
+                    st.write(profile["longBusinessSummary"])
+                overview = {
+                    "Sector": profile.get("sector"),
+                    "Industry": profile.get("industry"),
+                    "Country": profile.get("country"),
+                    "City": profile.get("city"),
+                    "Website": profile.get("website"),
+                    "Phone": profile.get("phone"),
+                    "Exchange": price.get("exchangeName") or matches[0].get("exchange"),
+                    "Quote type": price.get("quoteType") or matches[0].get("type"),
+                }
+                st.table({"Field": list(overview), "Value": [value or "—" for value in overview.values()]})
+                show_yahoo_module(info, "assetProfile", "Full company profile")
+                show_yahoo_module(info, "calendarEvents", "Corporate calendar")
+            with finance_tab:
+                for module, title in (
+                    ("price", "Price and exchange data"),
+                    ("summaryDetail", "Trading and valuation summary"),
+                    ("financialData", "Financial performance"),
+                    ("defaultKeyStatistics", "Key statistics"),
+                    ("quoteType", "Security details"),
+                ):
+                    show_yahoo_module(info, module, title)
+            with statements_tab:
+                for module, title in (
+                    ("incomeStatementHistory", "Annual income statements"),
+                    ("incomeStatementHistoryQuarterly", "Quarterly income statements"),
+                    ("balanceSheetHistory", "Annual balance sheets"),
+                    ("balanceSheetHistoryQuarterly", "Quarterly balance sheets"),
+                    ("cashflowStatementHistory", "Annual cash-flow statements"),
+                    ("cashflowStatementHistoryQuarterly", "Quarterly cash-flow statements"),
+                    ("earnings", "Earnings"),
+                    ("earningsHistory", "Earnings history"),
+                    ("earningsTrend", "Earnings trend"),
+                    ("recommendationTrend", "Analyst recommendations"),
+                ):
+                    show_yahoo_module(info, module, title)
+            with ownership_tab:
+                for module, title in (
+                    ("majorHoldersBreakdown", "Major holders"),
+                    ("institutionOwnership", "Institutional ownership"),
+                    ("fundOwnership", "Fund ownership"),
+                    ("insiderHolders", "Insider holders"),
+                    ("insiderTransactions", "Insider transactions"),
+                    ("netSharePurchaseActivity", "Share purchase activity"),
+                    ("secFilings", "SEC filings"),
+                    ("upgradeDowngradeHistory", "Upgrades and downgrades"),
+                ):
+                    show_yahoo_module(info, module, title)
+            with raw_tab:
+                st.json(info, expanded=False)
+                download_json(result, f"{symbol}_yahoo_finance.json")
     else:
         raw = st.text_area("Patent document numbers", placeholder="US12345678B2\nEP1234567A1", height=180)
         numbers = [value.strip() for value in raw.replace(",", "\n").splitlines() if value.strip()]
@@ -579,9 +684,11 @@ with st.sidebar:
         st.warning("No matching tools")
         filtered = list(TOOLS)
     selection_key = f"tool_{category}_{search.strip().lower()}"
+    default_index = filtered.index(DEFAULT_TOOL) if category == "All" and not search.strip() and DEFAULT_TOOL in filtered else 0
     selected = st.selectbox(
         "Tool",
         filtered,
+        index=default_index,
         key=selection_key,
         format_func=lambda name: name if name in READY_TOOLS else f"{name} · In build",
     )
