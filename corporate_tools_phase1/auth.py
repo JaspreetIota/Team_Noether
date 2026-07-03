@@ -70,7 +70,7 @@ def require_login() -> str:
                 "<div class='auth-hero'><div class='auth-mark'>N</div>"
                 "<div class='tool-kicker'>Secure workspace</div>"
                 "<h1>Welcome back</h1><p>Sign in to continue to your corporate toolkit.</p>"
-                "<div class='auth-byline'>by Bhawna Sharda</div></div>",
+                "<div class='auth-byline'>by Bhawna</div></div>",
                 unsafe_allow_html=True,
             )
             if not users:
